@@ -145,7 +145,15 @@ func DoLog(t testing.TestingT, callDepth int, writer io.Writer, args ...interfac
 	date := time.Now()
 	prefix := fmt.Sprintf("%s %s %s:", t.Name(), date.Format(time.RFC3339), CallerPrefix(callDepth+1))
 	allArgs := append([]interface{}{prefix}, args...)
-	fmt.Fprintln(writer, allArgs...)
+
+	goT, ok := t.(*gotesting.T)
+	if ok {
+		goT.Log(allArgs...)
+	}
+
+	if writer != os.Stdout {
+		fmt.Fprintln(writer, allArgs...)
+	}
 }
 
 // CallerPrefix returns the file and line number information about the methods that called this method, based on the current
