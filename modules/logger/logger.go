@@ -146,13 +146,14 @@ func DoLog(t testing.TestingT, callDepth int, writer io.Writer, args ...interfac
 	prefix := fmt.Sprintf("%s %s %s:", t.Name(), date.Format(time.RFC3339), CallerPrefix(callDepth+1))
 	allArgs := append([]interface{}{prefix}, args...)
 
+	if writer != os.Stdout {
+		fmt.Fprintln(writer, allArgs...)
+		return
+	}
+
 	goT, ok := t.(*gotesting.T)
 	if ok {
 		goT.Log(allArgs...)
-	}
-
-	if writer != os.Stdout {
-		fmt.Fprintln(writer, allArgs...)
 	}
 }
 
